@@ -70,7 +70,10 @@ function getSvg(text: string, width: number, height: number) {
     const spacing = 3
     // const quote = wrapText(text, 30)
 
-    const texts = text.split(" ")
+    // const texts = text.split(" ")
+    const texts = "Goodmorning eveyone \n today is a new day \n go get it!".split("\n ")
+    // pass array of texts, and optional line gap (default is 10) into getPositioning, it returns each line with their y position
+    const textPositioning = getPositioning(texts)
 
     const svg = `
         <svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" text-anchor="middle">
@@ -92,10 +95,12 @@ function getSvg(text: string, width: number, height: number) {
             <rect width="100%" height="100%"></rect>
 
             <text>
-                <tspan x="50%" y="30%" dy="1em">Yesterday is history,</tspan>
-                <tspan x="50%" y="40%" dy="1em">tomorrow is a mystery,</tspan>
-                <tspan x="50%" y="50%" dy="1em">today is a gift of God,</tspan>
-                <tspan x="50%" y="60%" dy="1em">which is why we call it the present.</tspan>
+            ${
+                textPositioning.map(textPosition => {
+                    const {text, position} = textPosition
+                    return `<tspan x="50%" y="${position}%" dy="1em">${text}</tspan>`
+                })
+            }
             </text>
 
         </svg>
@@ -115,4 +120,29 @@ function getFontSize(text: string) {
 
         return fontSize.toFixed(1)
     }
+}
+
+function getPositioning(texts: string[], lineGap?: number): TextPosition[] {
+    const textPositions: TextPosition[] = []
+    const middleIndex = Math.ceil(texts.length / 2)
+    const gap = lineGap ? lineGap : 10
+
+    texts.forEach((text, index) => {
+        const distanceFromMiddleIndex = (middleIndex - index) - 1
+        let position = 0
+        if(distanceFromMiddleIndex > 0) {
+            position = 50 - (gap*(distanceFromMiddleIndex))
+        } else if(distanceFromMiddleIndex === 0) {
+            position = 50
+        } else {
+            position = 50 + (gap*-(distanceFromMiddleIndex))
+        }
+        textPositions.push({text, position})
+    })
+    return textPositions
+}
+
+interface TextPosition {
+    text: string
+    position: number
 }
