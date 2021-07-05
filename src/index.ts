@@ -124,7 +124,8 @@ function getFontSize(text: string) {
 
 function getPositioning(texts: string[], lineGap?: number): TextPosition[] {
     const textPositions: TextPosition[] = []
-    const middleIndex = Math.ceil(texts.length / 2)
+    const middleGround = texts.length / 2
+    const middleIndex = Math.ceil(middleGround)
     const gap = lineGap ? lineGap : 10
 
     texts.forEach((text, index) => {
@@ -136,6 +137,9 @@ function getPositioning(texts: string[], lineGap?: number): TextPosition[] {
             position = 50
         } else {
             position = 50 + (gap*-(distanceFromMiddleIndex))
+        }
+        if(Number.isInteger(middleGround)) {
+            position = position - gap / 2
         }
         textPositions.push({text, position})
     })
